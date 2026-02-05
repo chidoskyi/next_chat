@@ -1,4 +1,3 @@
-// hooks/useWebRTC.ts
 import { useRef, useCallback, useEffect, useState } from 'react'
 import messageAPI from "@/src/services/messageService";
 import axios from 'axios';
@@ -11,8 +10,7 @@ interface WebRTCConfig {
   onConnectionStateChange?: (state: RTCPeerConnectionState) => void
 }
 
-// Fallback STUN-only — calls still work on most networks without TURN,
-// they just can't traverse strict NATs / firewalls.
+
 const FALLBACK_ICE_SERVERS: RTCIceServer[] = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
@@ -25,11 +23,10 @@ export const useWebRTC = (config: WebRTCConfig = {}) => {
   const remoteStreamRef   = useRef<MediaStream | null>(null)
   const pendingIceCandidatesRef = useRef<RTCIceCandidateInit[]>([])
 
-  // Config in a ref — callbacks never change identity, PC survives renders
+
   const configRef = useRef(config)
   configRef.current = config
 
-  // Streams as state so components re-render when they change
   const [localStream,  setLocalStream]  = useState<MediaStream | null>(null)
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null)
 
@@ -37,7 +34,6 @@ export const useWebRTC = (config: WebRTCConfig = {}) => {
   const [isLocalVideoEnabled,  setIsLocalVideoEnabled]  = useState(true)
   const [isLocalAudioEnabled,  setIsLocalAudioEnabled]  = useState(true)
 
-  // ── ICE server fetching (once per session) ────────────────────────
   const iceServersRef     = useRef<RTCIceServer[] | null>(null)
   const iceServersFetchingRef = useRef(false)
 
@@ -50,24 +46,20 @@ const fetchIceServers = useCallback(async (): Promise<RTCIceServer[]> => {
   try {
     console.log('🧊 Fetching TURN credentials from /api/turn-credentials...');
     
-    // Directly get the data (not a Response object)
     const data = await messageAPI.getTurnCredentials();
     
-    // Check if request failed
     if (!data) {
       console.warn('⚠️ Failed to fetch TURN credentials (null response)');
       iceServersRef.current = FALLBACK_ICE_SERVERS;
       return FALLBACK_ICE_SERVERS;
     }
     
-    // Check Metered API success status
     if (data.s !== 'success') {
       console.warn(`⚠️ TURN endpoint returned error: ${data.s}`);
       iceServersRef.current = FALLBACK_ICE_SERVERS;
       return FALLBACK_ICE_SERVERS;
     }
     
-    // Extract iceServers from Metered response
     const servers: RTCIceServer[] = data.v.iceServers.map(server => ({
       urls: server.urls,
       username: server.username,
