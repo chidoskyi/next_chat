@@ -1,1451 +1,330 @@
-/ "use client"
-
-// import React from "react"
-// import { useState, useRef, useEffect } from "react"
-// import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
-// import { Button } from "@/src/components/ui/button"
-// import { Input } from "@/src/components/ui/input"
-// import { ScrollArea } from "@/src/components/ui/scroll-area"
-// import { Badge } from "@/src/components/ui/badge"
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogHeader,
-//   DialogTitle,
-// } from "@/src/components/ui/dialog"
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
-// } from "@/src/components/ui/dropdown-menu"
-// import {
-//   Video,
-//   Phone,
-//   MoreVertical,
-//   Search,
-//   ChevronLeft,
-//   ChevronRight,
-//   Mic,
-//   Send,
-//   Smile,
-//   ImageIcon,
-//   MicOff,
-//   VideoOff,
-//   PhoneOff,
-//   Paperclip,
-//   Plus,
-//   Bell,
-//   X,
-//   MessageCircle,
-//   Users,
-//   Copy,
-//   Trash2,
-//   Reply,
-//   Check,
-//   Play,
-//   Pause,
-//   Minimize2,
-//   Maximize2,
-//   Move,
-//   Camera,
-// } from "lucide-react"
-// import { cn } from "@/src/lib/utils"
-// import Link from "next/link"
-// import { EmojiPicker } from "@/src/components/chat/emoji-picker"
-
-// interface Message {
-//   id: string
-//   sender: string
-//   content: string
-//   timestamp: string
-//   isOwn: boolean
-//   avatar?: string
-//   type?: "text" | "image" | "video" | "voice"
-//   mediaUrl?: string
-//   reaction?: string
-//   replyTo?: {
-//     id: string
-//     sender: string
-//     content: string
-//   }
-//   voiceDuration?: number
-// }
-
-// interface Conversation {
-//   id: string
-//   name: string
-//   avatar: string
-//   lastMessage: string
-//   timestamp: string
-//   unread?: number
-//   isTyping?: boolean
-//   isPinned?: boolean
-//   isGroup?: boolean
-//   phone?: string
-//   about?: string
-// }
-
-// interface Status {
-//   id: string
-//   name: string
-//   avatar: string
-//   hasStatus: boolean
-//   isViewed?: boolean
-//   isOwn?: boolean
-//   statusImages: string[]
-// }
-
-// const statuses: Status[] = [
-//   { id: "own", name: "My Status", avatar: "/abstract-geometric-shapes.png", hasStatus: false, isOwn: true, statusImages: [] },
-//   { id: "1", name: "Sarah", avatar: "/diverse-woman-portrait.png", hasStatus: true, isViewed: false, statusImages: ["/diverse-fashion-collection.png", "/diverse-street-fashion.png", "/diverse-group-friends.png"] },
-//   { id: "2", name: "John", avatar: "/man.jpg", hasStatus: true, isViewed: false, statusImages: ["/diverse-street-fashion.png", "/kpop-idol-fashion.jpg"] },
-//   { id: "3", name: "Emma", avatar: "/diverse-group-women.png", hasStatus: true, isViewed: true, statusImages: ["/diverse-group-friends.png"] },
-//   { id: "4", name: "Mike", avatar: "/diverse-man-portrait.png", hasStatus: true, isViewed: false, statusImages: ["/kpop-idol-fashion.jpg", "/newjeans.jpg", "/itzy.jpg"] },
-//   { id: "5", name: "Lisa", avatar: "/diverse-fashion-collection.png", hasStatus: true, isViewed: true, statusImages: ["/newjeans.jpg"] },
-//   { id: "6", name: "Alex", avatar: "/kpop-group.jpg", hasStatus: true, isViewed: false, statusImages: ["/itzy.jpg", "/diverse-travelers-world-map.png"] },
-//   { id: "7", name: "Nina", avatar: "/tabby-cat-sunbeam.png", hasStatus: true, isViewed: false, statusImages: ["/diverse-travelers-world-map.png", "/diverse-food-spread.png"] },
-// ]
-
-// const conversations: Conversation[] = [
-//   {
-//     id: "1",
-//     name: "Harry Maguire",
-//     avatar: "/man.jpg",
-//     lastMessage: "You need to improve now",
-//     timestamp: "09:12 AM",
-//     isPinned: true,
-//     phone: "+44 7700 900123",
-//     about: "Football is life",
-//   },
-//   {
-//     id: "2",
-//     name: "United Family",
-//     avatar: "/diverse-group-friends.png",
-//     lastMessage: "Rashford is typing...",
-//     timestamp: "06:25 AM",
-//     isTyping: true,
-//     isGroup: true,
-//     about: "Group for the team",
-//   },
-//   {
-//     id: "3",
-//     name: "Ramsus Hojlund",
-//     avatar: "/man.jpg",
-//     lastMessage: "Bos, I need to talk today",
-//     timestamp: "03:11 AM",
-//     unread: 2,
-//     phone: "+45 1234 5678",
-//     about: "Striker",
-//   },
-//   {
-//     id: "4",
-//     name: "Andre Onana",
-//     avatar: "/diverse-man-portrait.png",
-//     lastMessage: "I need more time bos",
-//     timestamp: "11:34 AM",
-//     phone: "+237 6789 0123",
-//     about: "Goalkeeper",
-//   },
-//   {
-//     id: "5",
-//     name: "Regullon",
-//     avatar: "/man.jpg",
-//     lastMessage: "Great performance lad",
-//     timestamp: "09:12 AM",
-//     phone: "+34 612 345 678",
-//     about: "Left back",
-//   },
-//   {
-//     id: "6",
-//     name: "Bruno Fernandes",
-//     avatar: "/diverse-man-portrait.png",
-//     lastMessage: "Play the game Bruno !",
-//     timestamp: "10:21 AM",
-//     phone: "+351 912 345 678",
-//     about: "Captain material",
-//   },
-// ]
-
-// const initialMessages: Message[] = [
-//   {
-//     id: "1",
-//     sender: "Harry Maguire",
-//     content: "Hey lads, tough game yesterday. Let's talk about what went wrong and how we can improve.",
-//     timestamp: "08:34 AM",
-//     isOwn: false,
-//     avatar: "/man.jpg",
-//     type: "text",
-//   },
-//   {
-//     id: "2",
-//     sender: "Bruno Fernandes",
-//     content: "Agreed, Harry. We had some good moments, but we need to be more clinical in front of the goal.",
-//     timestamp: "08:34 AM",
-//     isOwn: false,
-//     avatar: "/diverse-man-portrait.png",
-//     type: "text",
-//   },
-//   {
-//     id: "3",
-//     sender: "You",
-//     content: "We need to control the midfield and exploit their defensive weaknesses.",
-//     timestamp: "08:34 AM",
-//     isOwn: true,
-//     type: "text",
-//   },
-//   {
-//     id: "4",
-//     sender: "Harry Maguire",
-//     content: "",
-//     timestamp: "08:35 AM",
-//     isOwn: false,
-//     avatar: "/man.jpg",
-//     type: "image",
-//     mediaUrl: "/diverse-street-fashion.png",
-//   },
-//   {
-//     id: "5",
-//     sender: "You",
-//     content: "Voice message",
-//     timestamp: "08:36 AM",
-//     isOwn: true,
-//     type: "voice",
-//     voiceDuration: 15,
-//   },
-// ]
-
-// const emojiReactions = ["👍", "❤️", "😂", "😮", "😢", "🙏"]
-
-// export default function ChatsPage() {
-//   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
-//   const [showMobileChat, setShowMobileChat] = useState(false)
-//   const [messageInput, setMessageInput] = useState("")
-//   const [replyingTo, setReplyingTo] = useState<Message | null>(null)
-//   const [activeTab, setActiveTab] = useState<"chats" | "status" | "calls">("chats")
-//   const [messages, setMessages] = useState<Message[]>(initialMessages)
-//   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-//   const [showCallModal, setShowCallModal] = useState<"voice" | "video" | null>(null)
-//   const [isRecording, setIsRecording] = useState(false)
-//   const [showStatusViewer, setShowStatusViewer] = useState<Status | null>(null)
-//   const [currentStatusIndex, setCurrentStatusIndex] = useState(0)
-//   const [showNewChatModal, setShowNewChatModal] = useState(false)
-//   const [showNewGroupModal, setShowNewGroupModal] = useState(false)
-//   const [showProfileModal, setShowProfileModal] = useState(false)
-//   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null)
-
-//   // Call modal state
-//   const [callMinimized, setCallMinimized] = useState(false)
-//   const [callPosition, setCallPosition] = useState({ x: 20, y: 20 })
-//   const [isDraggingCall, setIsDraggingCall] = useState(false)
-//   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
-//   const [isMuted, setIsMuted] = useState(false)
-//   const [isCameraOff, setIsCameraOff] = useState(false)
-
-//   const statusScrollRef = useRef<HTMLDivElement>(null)
-//   const messagesEndRef = useRef<HTMLDivElement>(null)
-//   const messagesContainerRef = useRef<HTMLDivElement>(null)
-//   const fileInputRef = useRef<HTMLInputElement>(null)
-
-//   const scrollStatusLeft = () => {
-//     if (statusScrollRef.current) {
-//       statusScrollRef.current.scrollBy({ left: -200, behavior: "smooth" })
-//     }
-//   }
-
-//   const scrollStatusRight = () => {
-//     if (statusScrollRef.current) {
-//       statusScrollRef.current.scrollBy({ left: 200, behavior: "smooth" })
-//     }
-//   }
-
-//   // Mouse drag scroll for status
-//   const [isDragging, setIsDragging] = useState(false)
-//   const [startX, setStartX] = useState(0)
-//   const [scrollLeft, setScrollLeft] = useState(0)
-
-//   const handleMouseDown = (e: React.MouseEvent) => {
-//     if (!statusScrollRef.current) return
-//     setIsDragging(true)
-//     setStartX(e.pageX - statusScrollRef.current.offsetLeft)
-//     setScrollLeft(statusScrollRef.current.scrollLeft)
-//   }
-
-//   const handleMouseMove = (e: React.MouseEvent) => {
-//     if (!isDragging || !statusScrollRef.current) return
-//     e.preventDefault()
-//     const x = e.pageX - statusScrollRef.current.offsetLeft
-//     const walk = (x - startX) * 2
-//     statusScrollRef.current.scrollLeft = scrollLeft - walk
-//   }
-
-//   const handleMouseUp = () => {
-//     setIsDragging(false)
-//   }
-
-//   // Call window drag handlers
-//   const handleCallDragStart = (e: React.MouseEvent) => {
-//     if (!callMinimized) return
-//     setIsDraggingCall(true)
-//     setDragOffset({
-//       x: e.clientX - callPosition.x,
-//       y: e.clientY - callPosition.y,
-//     })
-//   }
-
-//   const handleCallDrag = (e: React.MouseEvent) => {
-//     if (!isDraggingCall) return
-//     setCallPosition({
-//       x: e.clientX - dragOffset.x,
-//       y: e.clientY - dragOffset.y,
-//     })
-//   }
-
-//   const handleCallDragEnd = () => {
-//     setIsDraggingCall(false)
-//   }
-
-//   useEffect(() => {
-//     if (isDraggingCall) {
-//       const handleMouseMove = (e: MouseEvent) => {
-//         setCallPosition({
-//           x: e.clientX - dragOffset.x,
-//           y: e.clientY - dragOffset.y,
-//         })
-//       }
-//       const handleMouseUp = () => setIsDraggingCall(false)
-//       window.addEventListener("mousemove", handleMouseMove)
-//       window.addEventListener("mouseup", handleMouseUp)
-//       return () => {
-//         window.removeEventListener("mousemove", handleMouseMove)
-//         window.removeEventListener("mouseup", handleMouseUp)
-//       }
-//     }
-//   }, [isDraggingCall, dragOffset])
-
-//   const sendMessage = () => {
-//     if (!messageInput.trim()) return
-//     const newMessage: Message = {
-//       id: Date.now().toString(),
-//       sender: "You",
-//       content: messageInput,
-//       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-//       isOwn: true,
-//       type: "text",
-//       replyTo: replyingTo ? { id: replyingTo.id, sender: replyingTo.sender, content: replyingTo.content } : undefined,
-//     }
-//     setMessages([...messages, newMessage])
-//     setMessageInput("")
-//     setReplyingTo(null)
-//   }
-
-//   const handleSendMedia = () => {
-//     fileInputRef.current?.click()
-//   }
-
-//   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = e.target.files?.[0]
-//     if (file) {
-//       const url = URL.createObjectURL(file)
-//       const newMessage: Message = {
-//         id: Date.now().toString(),
-//         sender: "You",
-//         content: "",
-//         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-//         isOwn: true,
-//         type: file.type.startsWith("video") ? "video" : "image",
-//         mediaUrl: url,
-//       }
-//       setMessages([...messages, newMessage])
-//     }
-//   }
-
-//   const handleVoiceNote = () => {
-//     setIsRecording(!isRecording)
-//     if (isRecording) {
-//       const newMessage: Message = {
-//         id: Date.now().toString(),
-//         sender: "You",
-//         content: "Voice message",
-//         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-//         isOwn: true,
-//         type: "voice",
-//         voiceDuration: Math.floor(Math.random() * 30) + 5,
-//       }
-//       setMessages([...messages, newMessage])
-//     }
-//   }
-
-//   const togglePlayVoice = (messageId: string) => {
-//     if (playingVoiceId === messageId) {
-//       setPlayingVoiceId(null)
-//     } else {
-//       setPlayingVoiceId(messageId)
-//     }
-//   }
-
-//   // Emoji reaction - only allows one emoji at a time (replaces previous)
-//   const addReaction = (messageId: string, emoji: string) => {
-//     setMessages(messages.map(m =>
-//       m.id === messageId
-//         ? { ...m, reaction: m.reaction === emoji ? undefined : emoji }
-//         : m
-//     ))
-//   }
-
-//   const copyMessage = (content: string) => {
-//     navigator.clipboard.writeText(content)
-//   }
-
-//   const deleteMessage = (id: string) => {
-//     setMessages(messages.filter(m => m.id !== id))
-//   }
-
-//   // Status navigation
-//   const nextStatusImage = () => {
-//     if (showStatusViewer && currentStatusIndex < showStatusViewer.statusImages.length - 1) {
-//       setCurrentStatusIndex(currentStatusIndex + 1)
-//     }
-//   }
-
-//   const prevStatusImage = () => {
-//     if (currentStatusIndex > 0) {
-//       setCurrentStatusIndex(currentStatusIndex - 1)
-//     }
-//   }
-
-//   const openStatusViewer = (status: Status) => {
-//     setShowStatusViewer(status)
-//     setCurrentStatusIndex(0)
-//   }
-
-//   useEffect(() => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-//   }, [messages])
-
-//   return (
-//     <div
-//       className="h-screen flex bg-background overflow-hidden"
-//       onMouseMove={handleCallDrag}
-//       onMouseUp={handleCallDragEnd}
-//     >
-//       {/* Sidebar - Conversations List */}
-//       <aside
-//         className={cn(
-//           "w-full md:w-96 lg:w-[420px] border-r border-border flex flex-col bg-background h-full",
-//           showMobileChat && "hidden md:flex"
-//         )}
-//       >
-//         {/* Header */}
-//         <div className="p-4 bg-[#075E54] text-white shrink-0">
-//           <div className="flex items-center justify-between mb-4">
-//             <h1 className="text-xl font-bold">ChatApp</h1>
-//             <div className="flex items-center gap-1">
-//               {/* Notifications Dropdown */}
-//               <DropdownMenu>
-//                 <DropdownMenuTrigger asChild>
-//                   <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 relative">
-//                     <Bell className="w-5 h-5" />
-//                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center">3</span>
-//                   </Button>
-//                 </DropdownMenuTrigger>
-//                 <DropdownMenuContent align="end" className="w-72">
-//                   <div className="p-2 font-semibold border-b">Notifications</div>
-//                   <div className="max-h-64 overflow-y-auto">
-//                     <DropdownMenuItem className="flex items-start gap-2 p-3">
-//                       <Avatar className="w-8 h-8">
-//                         <AvatarImage src="/man.jpg" />
-//                         <AvatarFallback>H</AvatarFallback>
-//                       </Avatar>
-//                       <div className="flex-1">
-//                         <p className="text-sm font-medium">Harry sent you a message</p>
-//                         <p className="text-xs text-muted-foreground">2 min ago</p>
-//                       </div>
-//                     </DropdownMenuItem>
-//                     <DropdownMenuItem className="flex items-start gap-2 p-3">
-//                       <Avatar className="w-8 h-8">
-//                         <AvatarImage src="/diverse-woman-portrait.png" />
-//                         <AvatarFallback>S</AvatarFallback>
-//                       </Avatar>
-//                       <div className="flex-1">
-//                         <p className="text-sm font-medium">Sarah added a new status</p>
-//                         <p className="text-xs text-muted-foreground">10 min ago</p>
-//                       </div>
-//                     </DropdownMenuItem>
-//                     <DropdownMenuItem className="flex items-start gap-2 p-3">
-//                       <Avatar className="w-8 h-8">
-//                         <AvatarImage src="/diverse-group-friends.png" />
-//                         <AvatarFallback>U</AvatarFallback>
-//                       </Avatar>
-//                       <div className="flex-1">
-//                         <p className="text-sm font-medium">New message in United Family</p>
-//                         <p className="text-xs text-muted-foreground">30 min ago</p>
-//                       </div>
-//                     </DropdownMenuItem>
-//                   </div>
-//                 </DropdownMenuContent>
-//               </DropdownMenu>
-
-//               <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-//                 <Search className="w-5 h-5" />
-//               </Button>
-//               <DropdownMenu>
-//                 <DropdownMenuTrigger asChild>
-//                   <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-//                     <MoreVertical className="w-5 h-5" />
-//                   </Button>
-//                 </DropdownMenuTrigger>
-//                 <DropdownMenuContent align="end" className="w-56">
-//                   <DropdownMenuItem onClick={() => setShowNewChatModal(true)}>
-//                     <MessageCircle className="w-4 h-4 mr-2" />
-//                     New chat
-//                   </DropdownMenuItem>
-//                   <DropdownMenuItem onClick={() => setShowNewGroupModal(true)}>
-//                     <Users className="w-4 h-4 mr-2" />
-//                     New group
-//                   </DropdownMenuItem>
-//                   <DropdownMenuItem>
-//                     <Phone className="w-4 h-4 mr-2" />
-//                     Linked devices
-//                   </DropdownMenuItem>
-//                   <DropdownMenuSeparator />
-//                   <DropdownMenuItem asChild>
-//                     <Link href="/chat-settings">
-//                       <MoreVertical className="w-4 h-4 mr-2" />
-//                       Settings
-//                     </Link>
-//                   </DropdownMenuItem>
-//                   <DropdownMenuSeparator />
-//                   <DropdownMenuItem asChild className="text-red-500">
-//                     <Link href="/login">
-//                       <X className="w-4 h-4 mr-2" />
-//                       Log out
-//                     </Link>
-//                   </DropdownMenuItem>
-//                 </DropdownMenuContent>
-//               </DropdownMenu>
-//             </div>
-//           </div>
-
-//           {/* Tabs */}
-//           <div className="flex">
-//             {(["chats", "status", "calls"] as const).map((tab) => (
-//               <button
-//                 key={tab}
-//                 onClick={() => setActiveTab(tab)}
-//                 className={cn(
-//                   "flex-1 py-2 text-sm font-medium border-b-2 transition-colors uppercase",
-//                   activeTab === tab ? "border-white" : "border-transparent text-white/70"
-//                 )}
-//               >
-//                 {tab}
-//               </button>
-//             ))}
-//           </div>
-//         </div>
-
-//         {activeTab === "chats" && (
-//           <div className="flex-1 flex flex-col min-h-0">
-//             {/* Status Row with Scroll Buttons */}
-//             <div className="border-b border-border relative shrink-0">
-//               <Button
-//                 variant="ghost"
-//                 size="icon"
-//                 className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background h-8 w-8"
-//                 onClick={scrollStatusLeft}
-//               >
-//                 <ChevronLeft className="w-4 h-4" />
-//               </Button>
-//               <div
-//                 ref={statusScrollRef}
-//                 className="flex gap-3 p-4 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing mx-8"
-//                 onMouseDown={handleMouseDown}
-//                 onMouseMove={handleMouseMove}
-//                 onMouseUp={handleMouseUp}
-//                 onMouseLeave={handleMouseUp}
-//               >
-//                 {statuses.map((status) => (
-//                   <button
-//                     key={status.id}
-//                     className="flex flex-col items-center gap-1 min-w-[60px]"
-//                     onClick={() => !status.isOwn && status.hasStatus && openStatusViewer(status)}
-//                   >
-//                     <div
-//                       className={cn(
-//                         "rounded-full p-0.5 relative",
-//                         status.isOwn
-//                           ? "bg-gray-300"
-//                           : status.isViewed
-//                             ? "bg-gray-400"
-//                             : "bg-gradient-to-tr from-[#25D366] to-[#128C7E]"
-//                       )}
-//                     >
-//                       <div className="bg-background rounded-full p-0.5">
-//                         <Avatar className="w-12 h-12">
-//                           <AvatarImage src={status.avatar || "/placeholder.svg"} alt={status.name} />
-//                           <AvatarFallback>{status.name[0]}</AvatarFallback>
-//                         </Avatar>
-//                       </div>
-//                       {status.isOwn && (
-//                         <div className="absolute bottom-0 right-0 w-5 h-5 bg-[#25D366] rounded-full flex items-center justify-center border-2 border-background">
-//                           <Plus className="w-3 h-3 text-white" />
-//                         </div>
-//                       )}
-//                     </div>
-//                     <span className="text-xs truncate w-full text-center">{status.isOwn ? "My Status" : status.name}</span>
-//                   </button>
-//                 ))}
-//               </div>
-//               <Button
-//                 variant="ghost"
-//                 size="icon"
-//                 className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background h-8 w-8"
-//                 onClick={scrollStatusRight}
-//               >
-//                 <ChevronRight className="w-4 h-4" />
-//               </Button>
-//             </div>
-
-//             {/* Search */}
-//             <div className="p-2 shrink-0">
-//               <div className="relative">
-//                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-//                 <Input placeholder="Search or start new chat" className="pl-10 bg-muted border-0" />
-//               </div>
-//             </div>
-
-//             {/* Conversations List */}
-//             <ScrollArea className="flex-1">
-//               {conversations.map((conversation) => (
-//                 <ConversationItem
-//                   key={conversation.id}
-//                   conversation={conversation}
-//                   isSelected={selectedConversation?.id === conversation.id}
-//                   onClick={() => {
-//                     setSelectedConversation(conversation)
-//                     setShowMobileChat(true)
-//                   }}
-//                 />
-//               ))}
-//             </ScrollArea>
-//           </div>
-//         )}
-
-//         {activeTab === "status" && (
-//           <ScrollArea className="flex-1">
-//             <div className="p-4">
-//               <div className="flex items-center gap-3 mb-6">
-//                 <div className="relative">
-//                   <Avatar className="w-14 h-14">
-//                     <AvatarImage src="/abstract-geometric-shapes.png" alt="My Status" />
-//                     <AvatarFallback>ME</AvatarFallback>
-//                   </Avatar>
-//                   <div className="absolute bottom-0 right-0 w-6 h-6 bg-[#25D366] rounded-full flex items-center justify-center border-2 border-background">
-//                     <Plus className="w-4 h-4 text-white" />
-//                   </div>
-//                 </div>
-//                 <div>
-//                   <h3 className="font-semibold">My Status</h3>
-//                   <p className="text-sm text-muted-foreground">Tap to add status update</p>
-//                 </div>
-//               </div>
-
-//               <h4 className="text-sm font-medium text-[#25D366] mb-3">Recent updates</h4>
-//               {statuses
-//                 .filter((s) => !s.isOwn && !s.isViewed)
-//                 .map((status) => (
-//                   <button
-//                     key={status.id}
-//                     className="flex items-center gap-3 w-full p-2 hover:bg-accent rounded-lg"
-//                     onClick={() => openStatusViewer(status)}
-//                   >
-//                     <div className="rounded-full p-0.5 bg-gradient-to-tr from-[#25D366] to-[#128C7E]">
-//                       <div className="bg-background rounded-full p-0.5">
-//                         <Avatar className="w-12 h-12">
-//                           <AvatarImage src={status.avatar || "/placeholder.svg"} alt={status.name} />
-//                           <AvatarFallback>{status.name[0]}</AvatarFallback>
-//                         </Avatar>
-//                       </div>
-//                     </div>
-//                     <div className="text-left">
-//                       <h3 className="font-semibold">{status.name}</h3>
-//                       <p className="text-sm text-muted-foreground">{status.statusImages.length} updates - Today, 10:30 AM</p>
-//                     </div>
-//                   </button>
-//                 ))}
-
-//               <h4 className="text-sm font-medium text-muted-foreground mb-3 mt-6">Viewed updates</h4>
-//               {statuses
-//                 .filter((s) => !s.isOwn && s.isViewed)
-//                 .map((status) => (
-//                   <button
-//                     key={status.id}
-//                     className="flex items-center gap-3 w-full p-2 hover:bg-accent rounded-lg"
-//                     onClick={() => openStatusViewer(status)}
-//                   >
-//                     <div className="rounded-full p-0.5 bg-gray-400">
-//                       <div className="bg-background rounded-full p-0.5">
-//                         <Avatar className="w-12 h-12">
-//                           <AvatarImage src={status.avatar || "/placeholder.svg"} alt={status.name} />
-//                           <AvatarFallback>{status.name[0]}</AvatarFallback>
-//                         </Avatar>
-//                       </div>
-//                     </div>
-//                     <div className="text-left">
-//                       <h3 className="font-semibold">{status.name}</h3>
-//                       <p className="text-sm text-muted-foreground">Yesterday, 8:45 PM</p>
-//                     </div>
-//                   </button>
-//                 ))}
-//             </div>
-//           </ScrollArea>
-//         )}
-
-//         {activeTab === "calls" && (
-//           <ScrollArea className="flex-1">
-//             <div className="p-4">
-//               <div className="flex items-center gap-3 mb-4 p-2 hover:bg-accent rounded-lg cursor-pointer">
-//                 <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center">
-//                   <Phone className="w-6 h-6 text-white" />
-//                 </div>
-//                 <div>
-//                   <h3 className="font-semibold">Create call link</h3>
-//                   <p className="text-sm text-muted-foreground">Share a link for your call</p>
-//                 </div>
-//               </div>
-
-//               <h4 className="text-sm font-medium text-muted-foreground mb-3">Recent</h4>
-//               {conversations.slice(0, 4).map((conv) => (
-//                 <div key={conv.id} className="flex items-center gap-3 p-2 hover:bg-accent rounded-lg">
-//                   <Avatar className="w-12 h-12">
-//                     <AvatarImage src={conv.avatar || "/placeholder.svg"} alt={conv.name} />
-//                     <AvatarFallback>{conv.name[0]}</AvatarFallback>
-//                   </Avatar>
-//                   <div className="flex-1">
-//                     <h3 className="font-semibold">{conv.name}</h3>
-//                     <p className="text-sm text-muted-foreground">Yesterday, 9:30 PM</p>
-//                   </div>
-//                   <Phone className="w-5 h-5 text-[#25D366]" />
-//                 </div>
-//               ))}
-//             </div>
-//           </ScrollArea>
-//         )}
-
-//         {/* FAB */}
-//         <div className="absolute bottom-6 right-6 md:hidden">
-//           <Button
-//             size="lg"
-//             className="rounded-full w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] shadow-lg"
-//             onClick={() => setShowNewChatModal(true)}
-//           >
-//             <MessageCircle className="w-6 h-6" />
-//           </Button>
-//         </div>
-//       </aside>
-
-//       {/* Chat Area */}
-//       <main className={cn("flex-1 flex flex-col bg-[#ECE5DD] h-full", !showMobileChat && "hidden md:flex")}>
-//         {selectedConversation ? (
-//           <>
-//             {/* Chat Header */}
-//             <header className="h-16 bg-[#075E54] text-white flex items-center justify-between px-4 shrink-0">
-//               <div className="flex items-center gap-3">
-//                 <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/10" onClick={() => setShowMobileChat(false)}>
-//                   <ChevronLeft className="w-5 h-5" />
-//                 </Button>
-//                 <button
-//                   className="flex items-center gap-3"
-//                   onClick={() => setShowProfileModal(true)}
-//                 >
-//                   <Avatar className="w-10 h-10">
-//                     <AvatarImage src={selectedConversation.avatar || "/placeholder.svg"} alt={selectedConversation.name} />
-//                     <AvatarFallback>{selectedConversation.name[0]}</AvatarFallback>
-//                   </Avatar>
-//                   <div className="text-left">
-//                     <h3 className="font-semibold">{selectedConversation.name}</h3>
-//                     {selectedConversation.isTyping ? (
-//                       <p className="text-xs text-green-300">typing...</p>
-//                     ) : (
-//                       <p className="text-xs text-white/70">tap for info</p>
-//                     )}
-//                   </div>
-//                 </button>
-//               </div>
-//               <div className="flex items-center gap-1">
-//                 <Button
-//                   variant="ghost"
-//                   size="icon"
-//                   className="text-white hover:bg-white/10"
-//                   onClick={() => setShowCallModal("video")}
-//                 >
-//                   <Video className="w-5 h-5" />
-//                 </Button>
-//                 <Button
-//                   variant="ghost"
-//                   size="icon"
-//                   className="text-white hover:bg-white/10"
-//                   onClick={() => setShowCallModal("voice")}
-//                 >
-//                   <Phone className="w-5 h-5" />
-//                 </Button>
-//                 <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-//                   <MoreVertical className="w-5 h-5" />
-//                 </Button>
-//               </div>
-//             </header>
-
-//             {/* Messages - Scrollable Container */}
-//             <div
-//               ref={messagesContainerRef}
-//               className="flex-1 overflow-y-auto p-4"
-//             >
-//               <div className="max-w-4xl mx-auto space-y-2">
-//                 <div className="flex justify-center mb-4">
-//                   <span className="bg-white/80 text-xs text-muted-foreground px-3 py-1 rounded-lg shadow-sm">Today</span>
-//                 </div>
-//                 {messages.map((message) => (
-//                   <div key={message.id} className={cn("flex gap-2 group", message.isOwn && "flex-row-reverse")}>
-//                     <div
-//                       className={cn(
-//                         "rounded-lg px-3 py-2 max-w-[70%] shadow-sm relative",
-//                         message.isOwn ? "bg-[#DCF8C6]" : "bg-white"
-//                       )}
-//                     >
-//                       {!message.isOwn && message.avatar && (
-//                         <span className="text-xs font-semibold text-[#25D366] block mb-1">{message.sender}</span>
-//                       )}
-//                       {message.replyTo && (
-//                         <div className="border-l-4 border-[#25D366] bg-black/5 pl-2 py-1 mb-2 rounded-r">
-//                           <div className="text-xs font-semibold text-[#25D366]">{message.replyTo.sender}</div>
-//                           <div className="text-xs text-muted-foreground truncate">{message.replyTo.content}</div>
-//                         </div>
-//                       )}
-
-//                       {/* Media Content */}
-//                       {message.type === "image" && message.mediaUrl && (
-//                         <div className="mb-2 rounded-lg overflow-hidden relative group/media">
-//                           <img src={message.mediaUrl || "/placeholder.svg"} alt="Shared" className="max-w-full rounded-lg" />
-//                           {/* Reaction button for images */}
-//                           <div className="absolute bottom-2 right-2 opacity-0 group-hover/media:opacity-100 transition-opacity">
-//                             <DropdownMenu>
-//                               <DropdownMenuTrigger asChild>
-//                                 <Button variant="secondary" size="sm" className="rounded-full h-8 w-8 p-0">
-//                                   <Smile className="w-4 h-4" />
-//                                 </Button>
-//                               </DropdownMenuTrigger>
-//                               <DropdownMenuContent>
-//                                 <div className="flex gap-1 p-2">
-//                                   {emojiReactions.map((emoji) => (
-//                                     <button
-//                                       key={emoji}
-//                                       className={cn(
-//                                         "text-xl hover:scale-125 transition-transform p-1 rounded",
-//                                         message.reaction === emoji && "bg-accent"
-//                                       )}
-//                                       onClick={() => addReaction(message.id, emoji)}
-//                                     >
-//                                       {emoji}
-//                                     </button>
-//                                   ))}
-//                                 </div>
-//                               </DropdownMenuContent>
-//                             </DropdownMenu>
-//                           </div>
-//                         </div>
-//                       )}
-//                       {message.type === "video" && message.mediaUrl && (
-//                         <div className="mb-2 rounded-lg overflow-hidden">
-//                           <video src={message.mediaUrl} controls className="max-w-full rounded-lg" />
-//                         </div>
-//                       )}
-//                       {message.type === "voice" && (
-//                         <div className="flex items-center gap-2 bg-black/5 rounded-full px-3 py-2 mb-2 min-w-[180px]">
-//                           <Button
-//                             variant="ghost"
-//                             size="icon"
-//                             className="h-8 w-8 rounded-full bg-[#25D366] hover:bg-[#128C7E] text-white"
-//                             onClick={() => togglePlayVoice(message.id)}
-//                           >
-//                             {playingVoiceId === message.id ? (
-//                               <Pause className="w-4 h-4" />
-//                             ) : (
-//                               <Play className="w-4 h-4" />
-//                             )}
-//                           </Button>
-//                           <div className="flex-1">
-//                             <div className="h-1 bg-[#25D366]/30 rounded-full overflow-hidden">
-//                               <div
-//                                 className={cn(
-//                                   "h-full bg-[#25D366] rounded-full transition-all duration-300",
-//                                   playingVoiceId === message.id ? "animate-pulse" : ""
-//                                 )}
-//                                 style={{ width: playingVoiceId === message.id ? "60%" : "0%" }}
-//                               />
-//                             </div>
-//                           </div>
-//                           <span className="text-xs text-muted-foreground">0:{message.voiceDuration?.toString().padStart(2, "0") || "15"}</span>
-//                         </div>
-//                       )}
-
-//                       {message.content && message.type !== "voice" && <p className="text-sm">{message.content}</p>}
-
-//                       {/* Single Reaction */}
-//                       {message.reaction && (
-//                         <div className="absolute -bottom-2 right-2">
-//                           <span className="text-sm bg-white shadow-sm rounded-full px-1.5 py-0.5 border">{message.reaction}</span>
-//                         </div>
-//                       )}
-
-//                       <div className="flex items-center justify-end gap-1 mt-1">
-//                         <span className="text-[10px] text-muted-foreground">{message.timestamp}</span>
-//                         {message.isOwn && <Check className="w-3 h-3 text-blue-500" />}
-//                       </div>
-
-//                       {/* Message tail */}
-//                       <div
-//                         className={cn(
-//                           "absolute top-0 w-3 h-3",
-//                           message.isOwn ? "-right-1 bg-[#DCF8C6]" : "-left-1 bg-white"
-//                         )}
-//                         style={{
-//                           clipPath: message.isOwn
-//                             ? "polygon(0 0, 100% 0, 0 100%)"
-//                             : "polygon(100% 0, 0 0, 100% 100%)",
-//                         }}
-//                       />
-//                     </div>
-
-//                     {/* Message Actions */}
-//                     <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 self-center transition-opacity">
-//                       <DropdownMenu>
-//                         <DropdownMenuTrigger asChild>
-//                           <Button variant="ghost" size="icon" className="h-7 w-7">
-//                             <Smile className="w-4 h-4" />
-//                           </Button>
-//                         </DropdownMenuTrigger>
-//                         <DropdownMenuContent>
-//                           <div className="flex gap-1 p-2">
-//                             {emojiReactions.map((emoji) => (
-//                               <button
-//                                 key={emoji}
-//                                 className={cn(
-//                                   "text-xl hover:scale-125 transition-transform p-1 rounded",
-//                                   message.reaction === emoji && "bg-accent"
-//                                 )}
-//                                 onClick={() => addReaction(message.id, emoji)}
-//                               >
-//                                 {emoji}
-//                               </button>
-//                             ))}
-//                           </div>
-//                         </DropdownMenuContent>
-//                       </DropdownMenu>
-//                       <Button
-//                         variant="ghost"
-//                         size="icon"
-//                         className="h-7 w-7"
-//                         onClick={() => setReplyingTo(message)}
-//                       >
-//                         <Reply className="w-4 h-4" />
-//                       </Button>
-//                       <DropdownMenu>
-//                         <DropdownMenuTrigger asChild>
-//                           <Button variant="ghost" size="icon" className="h-7 w-7">
-//                             <MoreVertical className="w-4 h-4" />
-//                           </Button>
-//                         </DropdownMenuTrigger>
-//                         <DropdownMenuContent>
-//                           <DropdownMenuItem onClick={() => copyMessage(message.content)}>
-//                             <Copy className="w-4 h-4 mr-2" />
-//                             Copy
-//                           </DropdownMenuItem>
-//                           <DropdownMenuItem
-//                             onClick={() => deleteMessage(message.id)}
-//                             className="text-red-500"
-//                           >
-//                             <Trash2 className="w-4 h-4 mr-2" />
-//                             Delete
-//                           </DropdownMenuItem>
-//                         </DropdownMenuContent>
-//                       </DropdownMenu>
-//                     </div>
-//                   </div>
-//                 ))}
-//                 <div ref={messagesEndRef} />
-//               </div>
-//             </div>
-
-//           {/* Message Input */}
-//           <div className="p-3 bg-[#F0F0F0] shrink-0">
-//             {replyingTo && (
-//               <div className="mb-2 bg-white rounded-lg p-2 border-l-4 border-[#25D366] flex items-start gap-2">
-//                 <div className="flex-1 min-w-0">
-//                   <div className="text-xs font-semibold text-[#25D366]">Replying to {replyingTo.sender}</div>
-//                   <div className="text-sm text-muted-foreground truncate">{replyingTo.content || "Media"}</div>
-//                 </div>
-//                 <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => setReplyingTo(null)}>
-//                   <X className="w-4 h-4" />
-//                 </Button>
-//               </div>
-//             )}
-//             <div className="flex items-center gap-2">
-//               <div className="flex-1 flex items-center gap-2 bg-white rounded-full px-4 py-2">
-//                 {/* Use EmojiPicker directly */}
-//                 <EmojiPicker
-//                   onEmojiSelect={(emoji) => setMessageInput(prev => prev + emoji)}
-//                 />
-
-//                 <Input
-//                   placeholder="Type a message"
-//                   className="flex-1 border-0 focus-visible:ring-0 px-0"
-//                   value={messageInput}
-//                   onChange={(e) => setMessageInput(e.target.value)}
-//                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-//                 />
-//                 <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={handleSendMedia}>
-//                   <Paperclip className="w-5 h-5 text-muted-foreground" />
-//                 </Button>
-//                 <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={handleSendMedia}>
-//                   <Camera className="w-5 h-5 text-muted-foreground" />
-//                 </Button>
-//                 <input
-//                   type="file"
-//                   ref={fileInputRef}
-//                   className="hidden"
-//                   accept="image/*,video/*"
-//                   onChange={handleFileSelect}
-//                 />
-//               </div>
-//               {messageInput.trim() ? (
-//                 <Button
-//                   size="icon"
-//                   className="rounded-full w-12 h-12 bg-[#25D366] hover:bg-[#128C7E]"
-//                   onClick={sendMessage}
-//                 >
-//                   <Send className="w-5 h-5" />
-//                 </Button>
-//               ) : (
-//                 <Button
-//                   size="icon"
-//                   className={cn(
-//                     "rounded-full w-12 h-12",
-//                     isRecording ? "bg-red-500 hover:bg-red-600" : "bg-[#25D366] hover:bg-[#128C7E]"
-//                   )}
-//                   onClick={handleVoiceNote}
-//                 >
-//                   <Mic className="w-5 h-5" />
-//                 </Button>
-//               )}
-//             </div>
-//           </div>
-//           </>
-//         ) : (
-//           <div className="flex-1 flex items-center justify-center bg-[#F8F9FA]">
-//             <div className="text-center max-w-md">
-//               <div className="w-64 h-64 mx-auto mb-6 bg-gradient-to-br from-[#25D366]/20 to-[#128C7E]/20 rounded-full flex items-center justify-center">
-//                 <MessageCircle className="w-24 h-24 text-[#25D366]" />
-//               </div>
-//               <h3 className="text-2xl font-light text-gray-600 mb-2">ChatApp Web</h3>
-//               <p className="text-sm text-muted-foreground">
-//                 Send and receive messages without keeping your phone online.
-//                 <br />
-//                 Use ChatApp on up to 4 linked devices and 1 phone at the same time.
-//               </p>
-//             </div>
-//           </div>
-//         )}
-//       </main>
-
-//       {/* Draggable/Minimizable Call Window */}
-//       {showCallModal && (
-//         <div
-//           className={cn(
-//             "fixed z-50 shadow-2xl transition-all duration-300",
-//             callMinimized
-//               ? "w-48 h-32 rounded-xl cursor-move"
-//               : "inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[400px] md:h-[500px] rounded-2xl"
-//           )}
-//           style={callMinimized ? { left: callPosition.x, top: callPosition.y } : undefined}
-//           onMouseDown={callMinimized ? handleCallDragStart : undefined}
-//         >
-//           <div className={cn(
-//             "h-full w-full bg-[#075E54] text-white rounded-2xl overflow-hidden flex flex-col",
-//             callMinimized && "rounded-xl"
-//           )}>
-//             {/* Call Header */}
-//             <div className="flex items-center justify-between p-3 shrink-0">
-//               {callMinimized ? (
-//                 <span className="text-sm font-medium truncate">{selectedConversation?.name}</span>
-//               ) : (
-//                 <span className="text-sm text-white/70">{showCallModal === "video" ? "Video call" : "Voice call"}</span>
-//               )}
-//               <div className="flex items-center gap-1">
-//                 <Button
-//                   variant="ghost"
-//                   size="icon"
-//                   className="h-7 w-7 text-white hover:bg-white/10"
-//                   onClick={() => setCallMinimized(!callMinimized)}
-//                 >
-//                   {callMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-//                 </Button>
-//                 <Button
-//                   variant="ghost"
-//                   size="icon"
-//                   className="h-7 w-7 text-white hover:bg-white/10"
-//                   onClick={() => {
-//                     setShowCallModal(null)
-//                     setCallMinimized(false)
-//                   }}
-//                 >
-//                   <X className="w-4 h-4" />
-//                 </Button>
-//               </div>
-//             </div>
-
-//             {/* Call Content */}
-//             {!callMinimized && (
-//               <>
-//                 <div className="flex-1 flex flex-col items-center justify-center">
-//                   <Avatar className="w-24 h-24 mb-4">
-//                     <AvatarImage src={selectedConversation?.avatar || "/placeholder.svg"} />
-//                     <AvatarFallback>{selectedConversation?.name?.[0]}</AvatarFallback>
-//                   </Avatar>
-//                   <h2 className="text-xl font-semibold mb-2">{selectedConversation?.name}</h2>
-//                   <p className="text-white/70">
-//                     {showCallModal === "video" ? "Video calling..." : "Calling..."}
-//                   </p>
-
-//                   {showCallModal === "video" && (
-//                     <div className="w-full aspect-video bg-black/50 rounded-lg mt-6 mx-4 flex items-center justify-center max-w-[300px]">
-//                       {isCameraOff ? (
-//                         <VideoOff className="w-12 h-12 text-white/50" />
-//                       ) : (
-//                         <Video className="w-12 h-12 text-white/50" />
-//                       )}
-//                     </div>
-//                   )}
-//                 </div>
-
-//                 {/* Call Controls */}
-//                 <div className="flex items-center justify-center gap-6 p-6">
-//                   <Button
-//                     variant="ghost"
-//                     size="icon"
-//                     className={cn(
-//                       "w-14 h-14 rounded-full",
-//                       isMuted ? "bg-white text-[#075E54]" : "bg-white/10 hover:bg-white/20"
-//                     )}
-//                     onClick={() => setIsMuted(!isMuted)}
-//                   >
-//                     {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-//                   </Button>
-//                   <Button
-//                     size="icon"
-//                     className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600"
-//                     onClick={() => {
-//                       setShowCallModal(null)
-//                       setCallMinimized(false)
-//                     }}
-//                   >
-//                     <PhoneOff className="w-7 h-7" />
-//                   </Button>
-//                   {showCallModal === "video" && (
-//                     <Button
-//                       variant="ghost"
-//                       size="icon"
-//                       className={cn(
-//                         "w-14 h-14 rounded-full",
-//                         isCameraOff ? "bg-white text-[#075E54]" : "bg-white/10 hover:bg-white/20"
-//                       )}
-//                       onClick={() => setIsCameraOff(!isCameraOff)}
-//                     >
-//                       {isCameraOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
-//                     </Button>
-//                   )}
-//                 </div>
-//               </>
-//             )}
-
-//             {/* Minimized View */}
-//             {callMinimized && (
-//               <div className="flex-1 flex items-center justify-center gap-3 px-3">
-//                 <Avatar className="w-10 h-10">
-//                   <AvatarImage src={selectedConversation?.avatar || "/placeholder.svg"} />
-//                   <AvatarFallback>{selectedConversation?.name?.[0]}</AvatarFallback>
-//                 </Avatar>
-//                 <Button
-//                   size="icon"
-//                   className="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600"
-//                   onClick={() => {
-//                     setShowCallModal(null)
-//                     setCallMinimized(false)
-//                   }}
-//                 >
-//                   <PhoneOff className="w-5 h-5" />
-//                 </Button>
-//               </div>
-//             )}
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Status Viewer Modal with Multiple Images */}
-//       <Dialog open={showStatusViewer !== null} onOpenChange={() => setShowStatusViewer(null)}>
-//         <DialogContent className="sm:max-w-lg p-0 bg-black border-0">
-//           <div className="relative">
-//             {/* Progress bars for multiple images */}
-//             <div className="absolute top-2 left-2 right-2 flex gap-1 z-20">
-//               {showStatusViewer?.statusImages.map((_, index) => (
-//                 <div
-//                   key={index}
-//                   className={cn(
-//                     "flex-1 h-0.5 rounded-full",
-//                     index < currentStatusIndex ? "bg-white" : index === currentStatusIndex ? "bg-white" : "bg-white/30"
-//                   )}
-//                 />
-//               ))}
-//             </div>
-
-//             <div className="absolute top-6 left-0 right-0 p-4 bg-gradient-to-b from-black/60 to-transparent z-10">
-//               <div className="flex items-center gap-3">
-//                 <Avatar className="w-10 h-10 border-2 border-white">
-//                   <AvatarImage src={showStatusViewer?.avatar || "/placeholder.svg"} />
-//                   <AvatarFallback>{showStatusViewer?.name?.[0]}</AvatarFallback>
-//                 </Avatar>
-//                 <div className="text-white">
-//                   <h3 className="font-semibold">{showStatusViewer?.name}</h3>
-//                   <p className="text-xs text-white/70">Today, 10:30 AM</p>
-//                 </div>
-//               </div>
-//             </div>
-
-//             {/* Navigation buttons */}
-//             {showStatusViewer && currentStatusIndex > 0 && (
-//               <Button
-//                 variant="ghost"
-//                 size="icon"
-//                 className="absolute left-2 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
-//                 onClick={prevStatusImage}
-//               >
-//                 <ChevronLeft className="w-8 h-8" />
-//               </Button>
-//             )}
-//             {showStatusViewer && currentStatusIndex < showStatusViewer.statusImages.length - 1 && (
-//               <Button
-//                 variant="ghost"
-//                 size="icon"
-//                 className="absolute right-2 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
-//                 onClick={nextStatusImage}
-//               >
-//                 <ChevronRight className="w-8 h-8" />
-//               </Button>
-//             )}
-
-//             <img
-//               src={showStatusViewer?.statusImages[currentStatusIndex] || "/placeholder.svg"}
-//               alt="Status"
-//               className="w-full aspect-[9/16] object-cover"
-//             />
-//             <Button
-//               variant="ghost"
-//               size="icon"
-//               className="absolute top-6 right-4 text-white hover:bg-white/20 z-10"
-//               onClick={() => setShowStatusViewer(null)}
-//             >
-//               <X className="w-5 h-5" />
-//             </Button>
-
-//             {/* Status count indicator */}
-//             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm">
-//               {currentStatusIndex + 1} / {showStatusViewer?.statusImages.length}
-//             </div>
-//           </div>
-//         </DialogContent>
-//       </Dialog>
-
-//       {/* User Profile Modal */}
-//       <Dialog open={showProfileModal} onOpenChange={setShowProfileModal}>
-//         <DialogContent className="sm:max-w-md">
-//           <div className="flex flex-col items-center py-4">
-//             <Avatar className="w-32 h-32 mb-4">
-//               <AvatarImage src={selectedConversation?.avatar || "/placeholder.svg"} />
-//               <AvatarFallback className="text-4xl">{selectedConversation?.name?.[0]}</AvatarFallback>
-//             </Avatar>
-//             <h2 className="text-2xl font-semibold mb-1">{selectedConversation?.name}</h2>
-//             <p className="text-muted-foreground mb-6">{selectedConversation?.phone || "+1 234 567 890"}</p>
-
-//             <div className="w-full space-y-4">
-//               <div className="bg-muted p-4 rounded-lg">
-//                 <p className="text-sm text-muted-foreground mb-1">About</p>
-//                 <p>{selectedConversation?.about || "Hey there! I am using ChatApp"}</p>
-//               </div>
-
-//               <div className="flex justify-center gap-8">
-//                 <Button
-//                   variant="ghost"
-//                   className="flex flex-col items-center gap-1 h-auto py-3"
-//                   onClick={() => {
-//                     setShowProfileModal(false)
-//                     setShowCallModal("voice")
-//                   }}
-//                 >
-//                   <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center">
-//                     <Phone className="w-5 h-5 text-white" />
-//                   </div>
-//                   <span className="text-xs">Call</span>
-//                 </Button>
-//                 <Button
-//                   variant="ghost"
-//                   className="flex flex-col items-center gap-1 h-auto py-3"
-//                   onClick={() => {
-//                     setShowProfileModal(false)
-//                     setShowCallModal("video")
-//                   }}
-//                 >
-//                   <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center">
-//                     <Video className="w-5 h-5 text-white" />
-//                   </div>
-//                   <span className="text-xs">Video</span>
-//                 </Button>
-//                 <Button variant="ghost" className="flex flex-col items-center gap-1 h-auto py-3">
-//                   <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center">
-//                     <Search className="w-5 h-5 text-white" />
-//                   </div>
-//                   <span className="text-xs">Search</span>
-//                 </Button>
-//               </div>
-
-//               <div className="border-t pt-4 space-y-2">
-//                 <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50">
-//                   <X className="w-4 h-4 mr-2" />
-//                   Block {selectedConversation?.name}
-//                 </Button>
-//                 <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50">
-//                   <Trash2 className="w-4 h-4 mr-2" />
-//                   Report {selectedConversation?.name}
-//                 </Button>
-//               </div>
-//             </div>
-//           </div>
-//         </DialogContent>
-//       </Dialog>
-
-//       {/* New Chat Modal */}
-//       <Dialog open={showNewChatModal} onOpenChange={setShowNewChatModal}>
-//         <DialogContent>
-//           <DialogHeader>
-//             <DialogTitle>New Chat</DialogTitle>
-//           </DialogHeader>
-//           <div className="space-y-4">
-//             <div className="relative">
-//               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-//               <Input placeholder="Search contacts" className="pl-10" />
-//             </div>
-//             <div className="space-y-2 max-h-64 overflow-y-auto">
-//               {conversations.map((conv) => (
-//                 <button
-//                   key={conv.id}
-//                   className="flex items-center gap-3 w-full p-2 hover:bg-accent rounded-lg"
-//                   onClick={() => {
-//                     setSelectedConversation(conv)
-//                     setShowMobileChat(true)
-//                     setShowNewChatModal(false)
-//                   }}
-//                 >
-//                   <Avatar className="w-10 h-10">
-//                     <AvatarImage src={conv.avatar || "/placeholder.svg"} />
-//                     <AvatarFallback>{conv.name[0]}</AvatarFallback>
-//                   </Avatar>
-//                   <span className="font-medium">{conv.name}</span>
-//                 </button>
-//               ))}
-//             </div>
-//           </div>
-//         </DialogContent>
-//       </Dialog>
-
-//       {/* New Group Modal */}
-//       <Dialog open={showNewGroupModal} onOpenChange={setShowNewGroupModal}>
-//         <DialogContent>
-//           <DialogHeader>
-//             <DialogTitle>New Group</DialogTitle>
-//           </DialogHeader>
-//           <div className="space-y-4">
-//             <Input placeholder="Group name" />
-//             <div className="relative">
-//               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-//               <Input placeholder="Add participants" className="pl-10" />
-//             </div>
-//             <div className="space-y-2 max-h-48 overflow-y-auto">
-//               {conversations.filter(c => !c.isGroup).map((conv) => (
-//                 <label
-//                   key={conv.id}
-//                   className="flex items-center gap-3 w-full p-2 hover:bg-accent rounded-lg cursor-pointer"
-//                 >
-//                   <input type="checkbox" className="rounded" />
-//                   <Avatar className="w-10 h-10">
-//                     <AvatarImage src={conv.avatar || "/placeholder.svg"} />
-//                     <AvatarFallback>{conv.name[0]}</AvatarFallback>
-//                   </Avatar>
-//                   <span className="font-medium">{conv.name}</span>
-//                 </label>
-//               ))}
-//             </div>
-//             <Button className="w-full bg-[#25D366] hover:bg-[#128C7E]">
-//               Create Group
-//             </Button>
-//           </div>
-//         </DialogContent>
-//       </Dialog>
-//     </div>
-//   )
-// }
-
-// function ConversationItem({
-//   conversation,
-//   isSelected,
-//   onClick,
-// }: {
-//   conversation: Conversation
-//   isSelected: boolean
-//   onClick: () => void
-// }) {
-//   return (
-//     <button
-//       onClick={onClick}
-//       className={cn(
-//         "w-full flex items-center gap-3 px-4 py-3 hover:bg-accent transition-colors border-b border-border/50",
-//         isSelected && "bg-accent"
-//       )}
-//     >
-//       <Avatar className="w-12 h-12">
-//         <AvatarImage src={conversation.avatar || "/placeholder.svg"} alt={conversation.name} />
-//         <AvatarFallback>{conversation.name[0]}</AvatarFallback>
-//       </Avatar>
-//       <div className="flex-1 text-left min-w-0">
-//         <div className="flex items-center justify-between mb-0.5">
-//           <span className="font-semibold text-base">{conversation.name}</span>
-//           <span className={cn("text-xs", conversation.unread ? "text-[#25D366]" : "text-muted-foreground")}>
-//             {conversation.timestamp}
-//           </span>
-//         </div>
-//         <div className="flex items-center gap-1">
-//           {conversation.isTyping ? (
-//             <p className="text-sm text-[#25D366]">typing...</p>
-//           ) : (
-//             <p className={cn("text-sm truncate", conversation.unread ? "font-medium" : "text-muted-foreground")}>
-//               {conversation.lastMessage}
-//             </p>
-//           )}
-//         </div>
-//       </div>
-//       {conversation.unread && (
-//         <Badge className="bg-[#25D366] text-white rounded-full w-5 h-5 p-0 flex items-center justify-center text-xs">
-//           {conversation.unread}
-//         </Badge>
-//       )}
-//     </button>
-//   )
-// }
+import { useCallback, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { 
+  selectCurrentCall,
+  setCurrentCall,
+  initiateCall as initiateCallAction,
+  answerCall as answerCallAction,
+  endCall as endCallAction,
+} from '@/src/store/slices/messageSlice'
+import type { Call } from '@/src/types/message'
+import type { User } from '@/src/types/users'
+import { useWebRTC } from './useWebRTC'
+import { useWebSocket } from '@/src/hooks/useWebSocket'
+import { toast } from '@/src/components/ui/use-toast'
+
+export const useCalls = (token: string | null) => {
+  const dispatch = useDispatch()
+  const { call: callWs } = useWebSocket(token)
+  const currentCall = useSelector(selectCurrentCall)
+  const [incomingCall, setIncomingCall] = useState<Call | null>(null)
+  
+  // WebRTC instance
+  const webrtc = useWebRTC({
+    onIceCandidate: (candidate) => {
+      if (currentCall) {
+        console.log('🧊 Sending ICE candidate:', candidate)
+        callWs.sendIceCandidate(currentCall.id, candidate.toJSON())
+      }
+    },
+    onConnectionStateChange: (state) => {
+      console.log('🔌 WebRTC connection state:', state)
+      if (state === 'failed' || state === 'disconnected') {
+        console.warn('⚠️ WebRTC connection failed/disconnected')
+        if (currentCall) {
+          hangUp(currentCall.id)
+        }
+      }
+    }
+  })
+  
+  // ✅ FIX: Listen for WebSocket call events with proper handling
+  useEffect(() => {
+    if (!callWs) return
+
+    // Incoming call - show notification
+    const unsubIncoming = callWs.on('call_initiated', async (data) => {
+      console.log('📞 Incoming call event:', data)
+      
+      // Create minimal user object
+      const caller: User = {
+        id: data.caller_id,
+        username: data.caller_username,
+        email: '',
+        display_name: data.caller_username,
+        email_verified: false,
+        created_at: new Date().toISOString(),
+        is_online: false,
+        last_seen: null,
+        profile: {
+          id: `temp-profile-${data.caller_id}`,
+          bio: '',
+          avatar: null,
+          phone: '',
+          location: '',
+          is_private: false,
+          gender: '',
+          website: '',
+          birthday: '',
+        }
+      }
+      
+      // Create call object
+      const call: Call = {
+        id: data.call_id,
+        call_type: data.call_type,
+        conversation: data.conversation_id,
+        caller: caller,
+        status: 'ringing',
+        offer_sdp: data.offer_sdp,
+        answer_sdp: null,
+        participants: [],
+        duration: null,
+        duration_display: '00:00',
+        initiated_at: new Date().toISOString(),
+        answered_at: null,
+        ended_at: null,
+      }
+      
+      console.log('✅ Setting incoming call:', call)
+      
+      // ✅ If this is NOT the caller, show incoming call notification
+      if (!data.is_caller) {
+        setIncomingCall(call)
+        dispatch(setCurrentCall(call))
+        
+        // Show browser notification if supported
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('Incoming Call', {
+            body: `${data.caller_username} is calling...`,
+            icon: '/call-icon.png'
+          })
+        }
+        
+        // Play ringtone
+        const ringtone = new Audio('/ringtone.mp3')
+        ringtone.loop = true
+        ringtone.play().catch(e => console.error('Failed to play ringtone:', e))
+      } else {
+        // Caller sees "calling..." state
+        dispatch(setCurrentCall(call))
+      }
+    })
+
+    // Call answered
+    const unsubAnswered = callWs.on('call_answered', async (data) => {
+      console.log('✅ Call answered:', data)
+      
+      // Stop ringtone
+      const ringtone = document.querySelector('audio')
+      if (ringtone) ringtone.pause()
+      
+      try {
+        let answer: RTCSessionDescriptionInit
+        try {
+          answer = typeof data.answer_sdp === 'string' 
+            ? JSON.parse(data.answer_sdp) 
+            : data.answer_sdp
+        } catch (e) {
+          answer = {
+            type: 'answer',
+            sdp: data.answer_sdp
+          }
+        }
+        
+        console.log('✅ Setting remote answer:', answer)
+        await webrtc.setRemoteAnswer(answer)
+        
+        // Update call status
+        if (currentCall) {
+          dispatch(setCurrentCall({
+            ...currentCall,
+            status: 'answered',
+            answered_at: new Date().toISOString()
+          }))
+        }
+      } catch (error) {
+        console.error('❌ Failed to process answer:', error)
+        toast({
+          title: "Call failed",
+          description: "Failed to establish connection",
+          variant: "destructive"
+        })
+      }
+    })
+
+    // ICE candidate received
+    const unsubIce = callWs.on('ice_candidate', async (data) => {
+      console.log('🧊 ICE candidate received:', data)
+      
+      try {
+        await webrtc.addIceCandidate(data.candidate)
+      } catch (error) {
+        console.error('❌ Failed to add ICE candidate:', error)
+      }
+    })
+
+    // Call ended
+    const unsubEnded = callWs.on('call_ended', (data) => {
+      console.log('📴 Call ended:', data)
+      webrtc.cleanup()
+      dispatch(setCurrentCall(null))
+      setIncomingCall(null)
+      
+      toast({
+        title: "Call ended",
+        description: `Call duration: ${data.duration}s`
+      })
+    })
+
+    // Call rejected
+    const unsubRejected = callWs.on('call_rejected', (data) => {
+      console.log('❌ Call rejected:', data)
+      webrtc.cleanup()
+      dispatch(setCurrentCall(null))
+      setIncomingCall(null)
+      
+      toast({
+        title: "Call rejected",
+        description: "The call was declined"
+      })
+    })
+
+    return () => {
+      unsubIncoming()
+      unsubAnswered()
+      unsubIce()
+      unsubEnded()
+      unsubRejected()
+    }
+  }, [callWs, dispatch, webrtc, currentCall])
+  
+  // Initiate a call
+  const startCall = useCallback(async (
+    conversationId: string, 
+    callType: 'audio' | 'video'
+  ) => {
+    try {
+      console.log('📞 Starting call...', { conversationId, callType })
+      
+      // 1. Create WebRTC offer
+      const offer = await webrtc.createOffer(callType === 'video')
+      console.log('✅ Created offer:', offer)
+      
+      // 2. Send offer via WebSocket (this will create the call in backend)
+      const offerString = JSON.stringify(offer)
+      console.log('📤 Sending offer via WebSocket')
+      callWs.initiateCall(conversationId, callType, offerString)
+      
+      toast({
+        title: "Calling...",
+        description: "Waiting for response"
+      })
+    } catch (error) {
+      console.error('❌ Failed to initiate call:', error)
+      webrtc.cleanup()
+      toast({
+        title: "Call failed",
+        description: "Failed to start call",
+        variant: "destructive"
+      })
+      throw error
+    }
+  }, [callWs, webrtc])
+  
+  // Answer incoming call
+  const acceptCall = useCallback(async (
+    callId: string, 
+    offerSdp: string,
+    callType: 'audio' | 'video'
+  ) => {
+    try {
+      console.log('✅ Accepting call...', { callId, callType })
+      
+      let offer: RTCSessionDescriptionInit
+      try {
+        offer = typeof offerSdp === 'string' ? JSON.parse(offerSdp) : offerSdp
+      } catch (e) {
+        offer = {
+          type: 'offer',
+          sdp: offerSdp
+        }
+      }
+      
+      console.log('✅ Parsed offer:', offer)
+      
+      if (!offer.type || !offer.sdp) {
+        throw new Error('Invalid offer: missing type or sdp')
+      }
+      
+      // Create WebRTC answer
+      const answer = await webrtc.createAnswer(offer, callType === 'video')
+      console.log('✅ Created answer:', answer)
+      
+      // Send answer via WebSocket
+      const answerString = JSON.stringify(answer)
+      console.log('📤 Sending answer via WebSocket')
+      callWs.answerCall(callId, answerString)
+      
+      // Clear incoming call
+      setIncomingCall(null)
+      
+      toast({
+        title: "Call connected",
+        description: "You are now in a call"
+      })
+    } catch (error) {
+      console.error('❌ Failed to answer call:', error)
+      webrtc.cleanup()
+      toast({
+        title: "Failed to answer",
+        description: "Could not connect to the call",
+        variant: "destructive"
+      })
+      throw error
+    }
+  }, [callWs, webrtc])
+  
+  // Reject call
+  const rejectCall = useCallback((callId: string) => {
+    console.log('❌ Rejecting call:', callId)
+    callWs.rejectCall(callId)
+    dispatch(setCurrentCall(null))
+    setIncomingCall(null)
+    
+    toast({
+      title: "Call rejected",
+      description: "You declined the call"
+    })
+  }, [callWs, dispatch])
+  
+  // End call
+  const hangUp = useCallback(async (callId: string) => {
+    console.log('📴 Hanging up:', callId)
+    
+    webrtc.cleanup()
+    callWs.endCall(callId)
+    
+    await dispatch(endCallAction(callId) as any)
+    dispatch(setCurrentCall(null))
+    setIncomingCall(null)
+  }, [callWs, dispatch, webrtc])
+  
+  return {
+    currentCall,
+    incomingCall,
+    connectionState: webrtc.connectionState,
+    localStream: webrtc.localStream,
+    remoteStream: webrtc.remoteStream,
+    isLocalVideoEnabled: webrtc.isLocalVideoEnabled,
+    isLocalAudioEnabled: webrtc.isLocalAudioEnabled,
+    
+    startCall,
+    acceptCall,
+    rejectCall,
+    hangUp,
+    toggleVideo: webrtc.toggleVideo,
+    toggleAudio: webrtc.toggleAudio,
+    switchCamera: webrtc.switchCamera,
+  }
+}

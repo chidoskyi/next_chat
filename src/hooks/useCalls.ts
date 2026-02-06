@@ -167,6 +167,10 @@ export const useCalls = (token: string | null) => {
 
       if (data.is_caller) {
         console.log('👤 You are the CALLER — waiting for answer')
+        // Play ringtone
+        const ringtone = new Audio('/ringtone.mp3')
+        ringtone.loop = true
+        ringtone.play().catch(e => console.error('Failed to play ringtone:', e))
         dispatch(setCurrentCall(call))
         flushPendingCandidates(data.call_id)
         toast({ title: 'Calling...', description: `${data.call_type === 'audio' ? 'Voice' : 'Video'} call initiated` })
@@ -187,6 +191,10 @@ export const useCalls = (token: string | null) => {
       console.log('  answer_sdp :', data.answer_sdp ? 'Present' : 'Missing')
       console.log('  callTypeRef:', callTypeRef.current)
       console.log('========================================')
+
+      // Stop ringtone
+      const ringtone = document.querySelector('audio')
+      if (ringtone) ringtone.pause()
 
       try {
         let answer: RTCSessionDescriptionInit
@@ -258,6 +266,10 @@ export const useCalls = (token: string | null) => {
     // ----------------------------------------------------------
     const unsubEnded = callWs.on('call_ended', (data) => {
       console.log('📴 Call ended | duration:', data.duration)
+            // Stop ringtone
+      const ringtone = document.querySelector('audio')
+      if (ringtone) ringtone.pause()
+
       activeCallIdRef.current   = null
       callTypeRef.current       = null
       callObjectRef.current     = null
@@ -276,6 +288,9 @@ export const useCalls = (token: string | null) => {
     // ----------------------------------------------------------
     const unsubRejected = callWs.on('call_rejected', (data) => {
       console.log('❌ Call rejected by', data.username)
+            // Stop ringtone
+      const ringtone = document.querySelector('audio')
+      if (ringtone) ringtone.pause()
       activeCallIdRef.current   = null
       callTypeRef.current       = null
       callObjectRef.current     = null

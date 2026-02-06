@@ -479,7 +479,7 @@ abstract class BaseWebSocketAPI<
   }
 
   protected getWebSocketUrl(token: string): string {
-    const wsHost = process.env.NEXT_PUBLIC_WS_HOST || "https://netphixs-chat.onrender.com";
+    const wsHost = process.env.NEXT_PUBLIC_WS_HOST || "localhost:8000";
     const protocol =
       typeof window !== "undefined" && window.location.protocol === "https:"
         ? "wss:"

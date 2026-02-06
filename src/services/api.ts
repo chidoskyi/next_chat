@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { User } from "@/src/types/users";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://netphixs-chat.onrender.com/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export interface AuthTokens {
   access: string;
